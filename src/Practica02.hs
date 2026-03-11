@@ -32,12 +32,12 @@ conjPotencia :: [a] -> [[a]]
 conjPotencia [] = [[]]
 conjPotencia (x:xs) = [(x:ys) | ys <- conjPotencia xs] ++ conjPotencia xs
 
---ELimina variables repetidas
+--Elimina variables repetidas
 eliminarDuplicados:: Eq a => [a]->[a]
 eliminarDuplicados [] = []
 eliminarDuplicados (x:xs) = x : eliminarDuplicados [y | y <-xs, y/=x]   --Toma el primer elemento 'x'
-                                                                        --Cada elemento 'xs' lo llama 'y', solo los deja pasar si son diferentes de 'x'
-                                                                        --Llama recusivamente a la funcion eliminarDuplicados sobre 'y'
+                                                                        --Saca cada elemento de 'xs', lo llama 'y', y solo lo deja pasar si es diferente de 'x'
+                                                                        --Llama recursivamente a la funcion eliminarDuplicados sobre 'y'
 
 --Busca si una variable esta en la lista
 pertenece :: Eq a => a -> [a] -> Bool
@@ -63,11 +63,11 @@ variables prop = eliminarDuplicados (varAuxiliar prop)              --Llama la f
 
 --Ejercicio 2
 interpretacion :: Prop -> Estado -> Bool
-interpretacion (Cons b) _ = b                                                  --Las contantes siempre tien su mismo valor, no importa el estado que se pase
-interpretacion (Var a) i = pertenece a i                                       --Si es una variable, llama a la funcion 'pertenece' para revisar si la variable esta enla lista del estado 'i', es verdad si pertenece a 'i' 
+interpretacion (Cons b) _ = b                                                  --Las contantes siempre tienen su mismo valor, no importa el estado que se pase
+interpretacion (Var a) i = pertenece a i                                       --Si es una variable, llama a la funcion 'pertenece' para revisar si la variable esta en la lista del estado 'i', es verdad si pertenece a 'i' 
 interpretacion (Not a) i = not(interpretacion a i)                             --Llama la funcion interpretacion para la variable 'a' y despues la niega
-interpretacion (Or a b) i = interpretacion a i || interpretacion b i           --Llama la funcion interpretacion para 'a' y 'b' y despues las las une con ||, es verdad si al menos una de las dos es verdad
-interpretacion (And a b) i = interpretacion a i && interpretacion b i          --Llama la funcion interpretacion para 'a' y 'b' y despues las las une con &&, es verdad si las dos son verdad
+interpretacion (Or a b) i = interpretacion a i || interpretacion b i           --Llama la funcion interpretacion para 'a' y 'b' y despues las une con ||, es verdad si al menos una de las dos es verdad
+interpretacion (And a b) i = interpretacion a i && interpretacion b i          --Llama la funcion interpretacion para 'a' y 'b' y despues las une con &&, es verdad si las dos son verdad
 interpretacion (Impl a b) i = not(interpretacion a i) || interpretacion b i    --Llama la funcion interpretacion para 'a' y 'b' y despues niega 'a' y las las une con ||, es verdad si al menos una de las dos es verdad
 interpretacion (Syss a b) i = interpretacion a i == interpretacion b i         --Llama la funcion interpretacion para 'a' y 'b' y despues compara si sus interpretaciones son iguales, es verdad si son iguales
 
@@ -83,11 +83,11 @@ modelos prop = [i | i <- estadosPosibles prop, interpretacion prop i ] --Da cada
 sonEquivalentes :: Prop -> Prop -> Bool
 sonEquivalentes f1 f2 = verifica estados
     where 
-    varUnidas = eliminarDuplicados (variables f1 ++ variables f2)      --JUnta todas las variables de las dos formulas  y elimina las que esten duplicadas
+    varUnidas = eliminarDuplicados (variables f1 ++ variables f2)      --Junta todas las variables de las dos formulas  y elimina las que esten duplicadas
     estados = conjPotencia varUnidas                                   --Saca todos los posibles estados de las variables unidas
                                                                        --La funcion verfica, recorre todos los estados
-    verifica [] = True                                                 --Termina de revisar todo, devuleve True
-    verifica (i:is) = if interpretacion f1 i == interpretacion f2 i    --'verifica' resive la lista de los estados, a cada formula saca la interpretacion en el primer estado, compara si son iguales
+    verifica [] = True                                                 --Termina de revisar todo, devuelve True
+    verifica (i:is) = if interpretacion f1 i == interpretacion f2 i    --'verifica' recibe la lista de los estados, a cada formula saca la interpretacion en el primer estado, compara si son iguales
     then verifica is                                                   --Si son iguales, continua comparando con los demas estados
     else False                                                         --Si no son iguales se corta y no son equivalentes
 
@@ -121,3 +121,5 @@ consecuenciaLogica premisas conclusion = verifica estado
                         then verifica is                                                   --Si la conclusion es verdad en ese estado, paso a los demas estados resursivamente
                         else False                                                         --Si la conclusion no es verdad en ese estado, devuelve falso
                     else verifica is                                                    --Si las premisas son falsas en el primer estado, no importa la conclusion, asi que continua en los demas estados
+
+
