@@ -106,7 +106,7 @@ consecuenciaLogica premisas conclusion = verifica estado
     where
 
     varLista [] = []
-    varLista (x:xs) = variables x ++ varLista xs                                        --Extra las variables del primer elemento de la lista 'x', despues vuelve a llamar a la funcion sobre los demas elementos de 'xs' y los concatena
+    varLista (x:xs) = variables x ++ varLista xs                                        --Extrae las variables del primer elemento de la lista 'x', despues vuelve a llamar a la funcion sobre los demas elementos de 'xs' y los concatena
 
     todasVariables = eliminarDuplicados (varLista premisas ++ variables conclusion)     --Creamos una gran lista con las variables de las premisas y la conclusion, y eliminamos las variables duplicadas
     
